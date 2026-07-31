@@ -1,8 +1,13 @@
+export interface MenuAllergen {
+  name: string;
+  iconUrl: string;
+}
+
 export interface MenuRecipe {
   title: string;
   description?: string;
   price?: number;
-  allergens?: string[];
+  allergens?: MenuAllergen[];
 }
 
 export interface MenuCategory {

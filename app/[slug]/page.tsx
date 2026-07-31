@@ -159,9 +159,18 @@ export default async function MenuPage({ params }: { params: { slug: string } })
                     </p>
                   )}
                   {recipe.allergens && recipe.allergens.length > 0 && (
-                    <p style={{ margin: "4px 0 0", fontSize: 11, color: "#9ca3af", fontStyle: "italic" }}>
-                      {recipe.allergens.join(" · ")}
-                    </p>
+                    <div style={{ display: "flex", gap: 4, marginTop: 5 }}>
+                      {recipe.allergens.map((allergen, k) => (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          key={k}
+                          src={allergen.iconUrl}
+                          alt={allergen.name}
+                          title={allergen.name}
+                          style={{ width: 16, height: 16, objectFit: "contain" }}
+                        />
+                      ))}
+                    </div>
                   )}
                 </div>
               ))}
