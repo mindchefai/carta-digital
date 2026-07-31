@@ -4,7 +4,9 @@ export interface MenuAllergen {
 }
 
 export interface MenuRecipe {
-  title: string;
+  // Título por idioma — solo incluye los idiomas para los que existe
+  // traducción (referencia + complementarios configurados en el documento).
+  translations: Record<string, string>;
   description?: string;
   price?: number;
   allergens?: MenuAllergen[];
@@ -28,6 +30,9 @@ export interface MenuDesign {
   titleFontFamily: string;
   titleAlignment: "left" | "center" | "right";
   logoUrl?: string | null;
+  // Idiomas disponibles (referencia primero) y cuál se muestra por defecto.
+  languages: string[];
+  defaultLanguage: string;
 }
 
 export interface DigitalMenu {
