@@ -9,6 +9,8 @@ export interface MenuRecipe {
   translations: Record<string, string>;
   description?: string;
   price?: number;
+  // Foto del plato — al hacer clic en el título se abre en grande.
+  photoUrl?: string;
   allergens?: MenuAllergen[];
 }
 

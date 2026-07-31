@@ -48,6 +48,7 @@ export function DigitalMenuView({ menu }: { menu: DigitalMenu }) {
     ? design.languages
     : [design.defaultLanguage || "es"];
   const [selectedLang, setSelectedLang] = useState(design.defaultLanguage || languages[0]);
+  const [openPhotoUrl, setOpenPhotoUrl] = useState<string | null>(null);
 
   const bodyFont  = resolveFontFamily(design.fontFamily);
   const titleFont = resolveFontFamily(design.titleFontFamily);
@@ -163,9 +164,23 @@ export function DigitalMenuView({ menu }: { menu: DigitalMenu }) {
               {cat.recipes.map((recipe, j) => (
                 <div key={j}>
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                    <span style={{ fontWeight: 600, fontSize: 15 }}>
-                      {titleFor(recipe, selectedLang)}
-                    </span>
+                    {recipe.photoUrl ? (
+                      <button
+                        onClick={() => setOpenPhotoUrl(recipe.photoUrl!)}
+                        style={{
+                          fontFamily: "inherit", fontWeight: 600, fontSize: 15, textAlign: "left",
+                          background: "none", border: "none", padding: 0, margin: 0,
+                          color: "inherit", cursor: "pointer", textDecoration: "underline",
+                          textDecorationColor: "rgba(0,0,0,0.2)", textUnderlineOffset: 3,
+                        }}
+                      >
+                        {titleFor(recipe, selectedLang)}
+                      </button>
+                    ) : (
+                      <span style={{ fontWeight: 600, fontSize: 15 }}>
+                        {titleFor(recipe, selectedLang)}
+                      </span>
+                    )}
                     {recipe.price !== undefined && (
                       <span style={{ fontWeight: 700, fontSize: 15, whiteSpace: "nowrap" }}>
                         {formatPrice(recipe.price)}
@@ -201,6 +216,37 @@ export function DigitalMenuView({ menu }: { menu: DigitalMenu }) {
           Carta Digital by MindChef
         </footer>
       </div>
+
+      {/* Lightbox: foto del plato al hacer clic en su título */}
+      {openPhotoUrl && (
+        <div
+          onClick={() => setOpenPhotoUrl(null)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", zIndex: 1000,
+            display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
+            cursor: "zoom-out",
+          }}
+        >
+          <button
+            onClick={() => setOpenPhotoUrl(null)}
+            aria-label="Cerrar"
+            style={{
+              position: "absolute", top: 16, right: 16,
+              width: 36, height: 36, borderRadius: "50%",
+              border: "none", background: "rgba(255,255,255,0.15)", color: "#fff",
+              fontSize: 20, lineHeight: 1, cursor: "pointer",
+            }}
+          >
+            ×
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={openPhotoUrl}
+            alt=""
+            style={{ maxWidth: "100%", maxHeight: "90vh", borderRadius: 8, objectFit: "contain" }}
+          />
+        </div>
+      )}
     </main>
   );
 }
