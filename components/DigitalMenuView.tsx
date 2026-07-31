@@ -30,12 +30,13 @@ function flagUrl(lang: string): string {
 }
 
 // Título de la receta en el idioma seleccionado — si esa receta en concreto
-// no tiene traducción a ese idioma, cae al idioma por defecto del documento
-// y, en último caso, a cualquier traducción disponible.
-function titleFor(recipe: MenuRecipe, lang: string, defaultLang: string): string {
+// no tiene traducción a ese idioma, cae siempre a español (es la única que
+// existe garantizada para todos los platos) y, en último caso, a cualquier
+// traducción disponible.
+function titleFor(recipe: MenuRecipe, lang: string): string {
   return (
     recipe.translations[lang] ??
-    recipe.translations[defaultLang] ??
+    recipe.translations.es ??
     Object.values(recipe.translations)[0] ??
     ""
   );
@@ -163,7 +164,7 @@ export function DigitalMenuView({ menu }: { menu: DigitalMenu }) {
                 <div key={j}>
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
                     <span style={{ fontWeight: 600, fontSize: 15 }}>
-                      {titleFor(recipe, selectedLang, design.defaultLanguage)}
+                      {titleFor(recipe, selectedLang)}
                     </span>
                     {recipe.price !== undefined && (
                       <span style={{ fontWeight: 700, fontSize: 15, whiteSpace: "nowrap" }}>
