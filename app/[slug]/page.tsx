@@ -65,11 +65,22 @@ export default async function MenuPage({ params }: { params: { slug: string } })
     new Set([bodyFont.googleFontName, titleFont.googleFontName].filter(Boolean) as string[])
   );
 
+  const backgroundStyle: React.CSSProperties = design.backgroundImageUrl
+    ? {
+        backgroundColor: design.backgroundColor || "#ffffff",
+        backgroundImage: `url(${design.backgroundImageUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "top center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }
+    : { background: design.backgroundColor || "#ffffff" };
+
   return (
     <main
       style={{
         minHeight: "100vh",
-        background: design.backgroundColor || "#ffffff",
+        ...backgroundStyle,
         color: design.bodyTextColor || "#374151",
         fontFamily: bodyFont.css,
         padding: "32px 16px 64px",

@@ -14,6 +14,9 @@ export interface MenuDesign {
   primaryColor: string;
   secondaryColor: string;
   backgroundColor: string;
+  // URL absoluta (o data: URL) del fondo real de la carta física — null si
+  // el fondo es un color sólido.
+  backgroundImageUrl?: string | null;
   bodyTextColor: string;
   categoryTextColor: string;
   fontFamily: string;
