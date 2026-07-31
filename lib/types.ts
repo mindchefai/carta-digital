@@ -4,6 +4,9 @@ export interface MenuAllergen {
 }
 
 export interface MenuRecipe {
+  // No se usa para pintar la carta — solo para que la app (al republicar)
+  // reconozca el mismo plato entre publicaciones y reutilice traducciones.
+  recipeId: string;
   // Título por idioma — solo incluye los idiomas para los que existe
   // traducción (referencia + complementarios configurados en el documento).
   translations: Record<string, string>;
