@@ -130,6 +130,12 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
             {menu.menu_title}
           </h1>
 
+          {menu.menu_date && (
+            <p style={{ fontSize: 13, color: design.bodyTextColor || "#374151", marginTop: 10, textTransform: "capitalize" }}>
+              {menu.menu_date}
+            </p>
+          )}
+
           {menu.menu_price != null && (
             <div style={{ marginTop: 12 }}>
               <div style={{ fontSize: 22, fontWeight: 700, color: design.primaryColor || "#68A5A8" }}>

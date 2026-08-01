@@ -66,5 +66,7 @@ export interface DigitalMenu {
   menu_price_label: string | null;
   half_menu_price: number | null;
   comments: string | null;
+  // Fecha del menú (Menú del día), ya formateada — null en el resto de tipos.
+  menu_date: string | null;
   updated_at: string;
 }

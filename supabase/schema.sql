@@ -20,6 +20,9 @@ create table if not exists public.digital_menus (
   menu_price_label text,
   half_menu_price numeric,
   comments text,
+  -- Fecha del menú (Menú del día, formateada tal cual se muestra en la Vista
+  -- previa) — solo se rellena cuando "Mostrar fecha" está activado.
+  menu_date text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (slug, menu_key)
