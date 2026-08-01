@@ -25,16 +25,37 @@ export interface MenuCategory {
 export interface MenuDesign {
   primaryColor: string;
   secondaryColor: string;
+  // Color de precios y destacados.
+  accentColor: string;
   backgroundColor: string;
   // URL absoluta (o data: URL) del fondo real de la carta física — null si
   // el fondo es un color sólido.
   backgroundImageUrl?: string | null;
   bodyTextColor: string;
+  // Texto secundario: descripciones, alérgenos, detalles.
+  lightTextColor: string;
   categoryTextColor: string;
+  // Fondo de cada plato/receta — null/undefined si es transparente.
+  itemBackgroundColor?: string | null;
+  // Fondo de la franja de fecha/precio/comentarios — null/undefined si es transparente.
+  dateBackgroundColor?: string | null;
   fontFamily: string;
   titleFontFamily: string;
+  useBoldTitles: boolean;
+  bodyFontSize: number;
+  titleFontSize: number;
+  priceFontSize: number;
+  lineSpacing: number;
   titleAlignment: "left" | "center" | "right";
   logoUrl?: string | null;
+  logoPosition: "left" | "center" | "right";
+  logoScale: number;
+  menuTitleScale: number;
+  showDivider: boolean;
+  dividerColor: string;
+  // Si el fondo de la "píldora" de cada categoría es transparente — si no,
+  // usa primaryColor.
+  categoryBgTransparent: boolean;
   // Idiomas disponibles (referencia primero) y cuál se muestra por defecto.
   languages: string[];
   defaultLanguage: string;

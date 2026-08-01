@@ -72,6 +72,23 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
     new Set([bodyFont.googleFontName, titleFont.googleFontName].filter(Boolean) as string[])
   );
 
+  // Publicaciones hechas antes de que estos campos existieran no los traen
+  // (son un JSONB libre) — mismos valores por defecto que el editor
+  // (DEFAULT_CONFIG en usePDFCustomization.ts) para que no se vean "rotas".
+  const primaryColor   = design.primaryColor   || "#68A5A8";
+  const accentColor    = design.accentColor    || design.primaryColor || "#203C42";
+  const lightTextColor = design.lightTextColor || "#6b7280";
+  const bodyFontSize   = design.bodyFontSize   || 8;
+  const titleFontSize  = design.titleFontSize  || 11;
+  const priceFontSize  = design.priceFontSize  || 8;
+  const lineSpacing    = design.lineSpacing    ?? 1;
+  const useBoldTitles  = design.useBoldTitles  ?? true;
+  const logoPosition   = design.logoPosition   || "left";
+  const logoScale      = design.logoScale      ?? 1;
+  const menuTitleScale = design.menuTitleScale ?? 1;
+  const showDivider    = design.showDivider    ?? true;
+  const dividerColor   = design.dividerColor   || primaryColor;
+
   const backgroundStyle: React.CSSProperties = design.backgroundImageUrl
     ? {
         backgroundColor: design.backgroundColor || "#ffffff",
@@ -82,6 +99,25 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
         backgroundAttachment: "fixed",
       }
     : { background: design.backgroundColor || "#ffffff" };
+
+  const titleStyle: React.CSSProperties = {
+    margin: 0,
+    fontSize: `${titleFontSize * 1.4 * menuTitleScale}pt`,
+    fontWeight: useBoldTitles ? 700 : 600,
+    fontFamily: titleFont.css,
+    color: design.secondaryColor || "#203C42",
+  };
+
+  const logoImg = design.logoUrl ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={design.logoUrl}
+      alt={menu.business_name}
+      style={{ height: 36 * logoScale, maxWidth: 90 * logoScale, objectFit: "contain", flexShrink: 0 }}
+    />
+  ) : null;
+
+  const titleEl = <h1 style={{ ...titleStyle, flex: logoPosition === "center" ? undefined : 1, textAlign: design.titleAlignment || "center" }}>{menu.menu_title}</h1>;
 
   return (
     <main
@@ -108,56 +144,56 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
             textAlign: design.titleAlignment || "center",
             paddingBottom: 16,
             marginBottom: 24,
-            borderBottom: `2px solid ${design.primaryColor || "#68A5A8"}`,
+            borderBottom: showDivider ? `2px solid ${dividerColor}` : "none",
           }}
         >
-          {design.logoUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={design.logoUrl}
-              alt={menu.business_name}
-              style={{ maxHeight: 64, marginBottom: 12 }}
-            />
-          )}
-          <h1
-            style={{
-              margin: 0,
-              fontSize: 28,
-              fontFamily: titleFont.css,
-              color: design.secondaryColor || "#203C42",
-            }}
-          >
-            {menu.menu_title}
-          </h1>
-
-          {menu.menu_date && (
-            <p style={{ fontSize: 13, color: design.bodyTextColor || "#374151", marginTop: 10, textTransform: "capitalize" }}>
-              {menu.menu_date}
-            </p>
-          )}
-
-          {menu.menu_price != null && (
-            <div style={{ marginTop: 12 }}>
-              <div style={{ fontSize: 22, fontWeight: 700, color: design.primaryColor || "#68A5A8" }}>
-                {menu.menu_price_label && (
-                  <span style={{ fontSize: 12, fontWeight: 600, display: "block", color: design.bodyTextColor || "#374151" }}>
-                    {menu.menu_price_label}
-                  </span>
-                )}
-                {formatPrice(menu.menu_price)}
-              </div>
-              {menu.half_menu_price != null && (
-                <div style={{ fontSize: 13, color: design.bodyTextColor || "#374151", marginTop: 2 }}>
-                  Medio menú: {formatPrice(menu.half_menu_price)}
-                </div>
-              )}
+          {logoPosition === "center" ? (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+              {logoImg}
+              <h1 style={{ ...titleStyle, textAlign: "center" }}>{menu.menu_title}</h1>
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexDirection: logoPosition === "right" ? "row-reverse" : "row" }}>
+              {logoImg}
+              {titleEl}
             </div>
           )}
 
-          {menu.comments && (
-            <p style={{ fontSize: 13, fontStyle: "italic", color: design.bodyTextColor || "#374151", marginTop: 10 }}>
-              {menu.comments}
-            </p>
+          {(menu.menu_date || menu.menu_price != null || menu.comments) && (
+            <div style={{
+              marginTop: 14, padding: "10px", borderRadius: 8,
+              background: design.dateBackgroundColor ?? "transparent",
+            }}>
+              {menu.menu_date && (
+                <p style={{ fontSize: 12, color: design.bodyTextColor || "#374151", margin: 0, textTransform: "capitalize" }}>
+                  {menu.menu_date}
+                </p>
+              )}
+
+              {menu.menu_price != null && (
+                <div style={{ marginTop: menu.menu_date ? 8 : 0 }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: accentColor }}>
+                    {menu.menu_price_label && (
+                      <span style={{ fontSize: 12, fontWeight: 600, display: "block", color: design.bodyTextColor || "#374151" }}>
+                        {menu.menu_price_label}
+                      </span>
+                    )}
+                    {formatPrice(menu.menu_price)}
+                  </div>
+                  {menu.half_menu_price != null && (
+                    <div style={{ fontSize: 13, color: design.bodyTextColor || "#374151", marginTop: 2 }}>
+                      Medio menú: {formatPrice(menu.half_menu_price)}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {menu.comments && (
+                <p style={{ fontSize: 12, fontStyle: "italic", color: design.bodyTextColor || "#374151", margin: (menu.menu_date || menu.menu_price != null) ? "8px 0 0" : 0 }}>
+                  {menu.comments}
+                </p>
+              )}
+            </div>
           )}
 
           {sortedMenus.length > 1 && (
@@ -166,7 +202,7 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
               onChange={e => setSelectedMenuKey(e.target.value)}
               style={{
                 marginTop: 14, padding: "8px 14px", borderRadius: 999,
-                border: `1.5px solid ${design.primaryColor || "#68A5A8"}`,
+                border: `1.5px solid ${primaryColor}`,
                 background: "#fff", color: design.secondaryColor || "#203C42",
                 fontSize: 13, fontWeight: 600, cursor: "pointer",
               }}
@@ -189,7 +225,7 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
                   style={{
                     padding: 2,
                     borderRadius: "50%",
-                    border: `2px solid ${lang === selectedLang ? (design.primaryColor || "#68A5A8") : "transparent"}`,
+                    border: `2px solid ${lang === selectedLang ? primaryColor : "transparent"}`,
                     background: "none",
                     cursor: "pointer",
                     opacity: lang === selectedLang ? 1 : 0.55,
@@ -215,46 +251,58 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
             {cat.name && (
               <h2
                 style={{
-                  fontSize: 16,
-                  fontWeight: 700,
+                  fontSize: `${titleFontSize}pt`,
+                  fontWeight: useBoldTitles ? 700 : 600,
                   letterSpacing: 0.5,
                   textTransform: "uppercase",
+                  textAlign: "center",
                   color: design.categoryTextColor || design.secondaryColor || "#203C42",
+                  background: design.categoryBgTransparent === false ? primaryColor : "transparent",
+                  padding: "14px",
+                  borderRadius: 8,
                   marginBottom: 12,
                 }}
               >
                 {cat.name}
               </h2>
             )}
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div>
               {cat.recipes.map((recipe, j) => (
-                <div key={j}>
+                <div
+                  key={j}
+                  style={{
+                    background: design.itemBackgroundColor ?? "transparent",
+                    padding: `${14 * lineSpacing}px`,
+                    borderRadius: 8,
+                    marginBottom: j === cat.recipes.length - 1 ? 0 : `${10 * lineSpacing}px`,
+                  }}
+                >
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
                     {recipe.photoUrl ? (
                       <button
                         onClick={() => setOpenPhotoUrl(recipe.photoUrl!)}
                         style={{
-                          fontFamily: "inherit", fontWeight: 600, fontSize: 15, textAlign: "left",
+                          fontFamily: "inherit", fontWeight: 700, fontSize: `${bodyFontSize}pt`, textAlign: "left",
                           background: "none", border: "none", padding: 0, margin: 0,
-                          color: "inherit", cursor: "pointer", textDecoration: "underline",
+                          color: design.bodyTextColor || "inherit", cursor: "pointer", textDecoration: "underline",
                           textDecorationColor: "rgba(0,0,0,0.2)", textUnderlineOffset: 3,
                         }}
                       >
                         {titleFor(recipe, selectedLang)}
                       </button>
                     ) : (
-                      <span style={{ fontWeight: 600, fontSize: 15 }}>
+                      <span style={{ fontWeight: 700, fontSize: `${bodyFontSize}pt`, color: design.bodyTextColor || "inherit" }}>
                         {titleFor(recipe, selectedLang)}
                       </span>
                     )}
                     {recipe.price !== undefined && (
-                      <span style={{ fontWeight: 700, fontSize: 15, whiteSpace: "nowrap" }}>
+                      <span style={{ fontWeight: 700, fontSize: `${priceFontSize}pt`, color: accentColor, whiteSpace: "nowrap" }}>
                         {formatPrice(recipe.price)}
                       </span>
                     )}
                   </div>
                   {recipe.description && (
-                    <p style={{ margin: "2px 0 0", fontSize: 13, color: "#6b7280" }}>
+                    <p style={{ margin: "2px 0 0", fontSize: `${bodyFontSize * 0.82}pt`, color: lightTextColor }}>
                       {recipe.description}
                     </p>
                   )}
