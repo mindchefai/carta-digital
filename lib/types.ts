@@ -60,5 +60,11 @@ export interface DigitalMenu {
   menu_title: string;
   design: MenuDesign;
   categories: MenuCategory[];
+  // Precio único de todo el menú (Menú del día/Degustación) — en Carta el
+  // precio va por plato, dentro de "categories", y estos campos van null.
+  menu_price: number | null;
+  menu_price_label: string | null;
+  half_menu_price: number | null;
+  comments: string | null;
   updated_at: string;
 }

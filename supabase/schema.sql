@@ -14,6 +14,12 @@ create table if not exists public.digital_menus (
   menu_title text not null default 'Carta',
   design jsonb not null default '{}'::jsonb,
   categories jsonb not null default '[]'::jsonb,
+  -- Precio global del menú (Menú del día/Degustación — en Carta el precio es
+  -- por plato, dentro de "categories") y nota general ("comments").
+  menu_price numeric,
+  menu_price_label text,
+  half_menu_price numeric,
+  comments text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (slug, menu_key)

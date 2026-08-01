@@ -19,7 +19,7 @@ function resolveFontFamily(family: string): { css: string; googleFontName: strin
   return { css: `'${family}', sans-serif`, googleFontName: family };
 }
 
-function formatPrice(price?: number): string {
+function formatPrice(price?: number | null): string {
   if (price === undefined || price === null) return "";
   return `${price.toFixed(2)} €`;
 }
@@ -129,6 +129,30 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
           >
             {menu.menu_title}
           </h1>
+
+          {menu.menu_price != null && (
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontSize: 22, fontWeight: 700, color: design.primaryColor || "#68A5A8" }}>
+                {menu.menu_price_label && (
+                  <span style={{ fontSize: 12, fontWeight: 600, display: "block", color: design.bodyTextColor || "#374151" }}>
+                    {menu.menu_price_label}
+                  </span>
+                )}
+                {formatPrice(menu.menu_price)}
+              </div>
+              {menu.half_menu_price != null && (
+                <div style={{ fontSize: 13, color: design.bodyTextColor || "#374151", marginTop: 2 }}>
+                  Medio menú: {formatPrice(menu.half_menu_price)}
+                </div>
+              )}
+            </div>
+          )}
+
+          {menu.comments && (
+            <p style={{ fontSize: 13, fontStyle: "italic", color: design.bodyTextColor || "#374151", marginTop: 10 }}>
+              {menu.comments}
+            </p>
+          )}
 
           {sortedMenus.length > 1 && (
             <select
