@@ -116,7 +116,7 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
     <img
       src={design.logoUrl}
       alt={menu.business_name}
-      style={{ height: 36 * logoScale, maxWidth: 90 * logoScale, objectFit: "contain", flexShrink: 0 }}
+      style={{ height: 36 * logoScale, maxWidth: 60 * logoScale, objectFit: "contain", flexShrink: 0 }}
     />
   ) : null;
 
