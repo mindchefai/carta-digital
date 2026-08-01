@@ -88,6 +88,9 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
   const menuTitleScale = design.menuTitleScale ?? 1;
   const showDivider    = design.showDivider    ?? true;
   const dividerColor   = design.dividerColor   || primaryColor;
+  // Solo Carta permite elegir dónde van los comentarios — Menú del día y
+  // Degustación siempre los muestran junto al precio (sin esta opción).
+  const commentsAtEnd  = design.commentsPosition === "end" && !!menu.comments;
 
   const backgroundStyle: React.CSSProperties = design.backgroundImageUrl
     ? {
@@ -159,7 +162,7 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
             </div>
           )}
 
-          {(menu.menu_date || menu.menu_price != null || menu.comments) && (
+          {(menu.menu_date || menu.menu_price != null || (menu.comments && !commentsAtEnd)) && (
             <div style={{
               marginTop: 14, padding: "10px", borderRadius: 8,
               background: design.dateBackgroundColor ?? "transparent",
@@ -188,7 +191,7 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
                 </div>
               )}
 
-              {menu.comments && (
+              {menu.comments && !commentsAtEnd && (
                 <p style={{ fontSize: 12, fontStyle: "italic", color: design.bodyTextColor || "#374151", margin: (menu.menu_date || menu.menu_price != null) ? "8px 0 0" : 0 }}>
                   {menu.comments}
                 </p>
@@ -325,6 +328,15 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
             </div>
           </section>
         ))}
+
+        {commentsAtEnd && (
+          <p style={{
+            textAlign: "center", fontSize: 12, fontStyle: "italic", marginTop: 32,
+            color: design.bodyTextColor || "#374151",
+          }}>
+            {menu.comments}
+          </p>
+        )}
 
         <footer style={{ textAlign: "center", marginTop: 40, fontSize: 11, color: "#d1d5db" }}>
           Carta Digital by MindChef

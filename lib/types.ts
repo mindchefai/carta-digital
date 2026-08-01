@@ -56,6 +56,8 @@ export interface MenuDesign {
   // Si el fondo de la "píldora" de cada categoría es transparente — si no,
   // usa primaryColor.
   categoryBgTransparent: boolean;
+  // Dónde se pintan los comentarios (solo relevante en Carta).
+  commentsPosition?: "below-title" | "end";
   // Idiomas disponibles (referencia primero) y cuál se muestra por defecto.
   languages: string[];
   defaultLanguage: string;
