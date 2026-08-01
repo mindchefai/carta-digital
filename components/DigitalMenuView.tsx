@@ -111,12 +111,23 @@ export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
     color: design.secondaryColor || "#203C42",
   };
 
+  // El tamaño base del logo en el editor (36×60px) está pensado para el
+  // hueco pequeño de la cabecera de un documento A4 — en una página web a
+  // pantalla completa (sin la reducción del "papel" del editor) se ve
+  // diminuto aunque el usuario suba logoScale al 100%. Multiplicador propio
+  // de la carta digital para que el mismo % se traduzca en un logo con un
+  // tamaño razonable en un móvil/navegador real.
+  const DIGITAL_LOGO_MULTIPLIER = 2.2;
   const logoImg = design.logoUrl ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={design.logoUrl}
       alt={menu.business_name}
-      style={{ height: 36 * logoScale, maxWidth: 60 * logoScale, objectFit: "contain", flexShrink: 0 }}
+      style={{
+        height: 36 * logoScale * DIGITAL_LOGO_MULTIPLIER,
+        maxWidth: 60 * logoScale * DIGITAL_LOGO_MULTIPLIER,
+        objectFit: "contain", flexShrink: 0,
+      }}
     />
   ) : null;
 
