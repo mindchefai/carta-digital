@@ -6,13 +6,17 @@ create extension if not exists "pgcrypto";
 
 create table if not exists public.digital_menus (
   id uuid primary key default gen_random_uuid(),
-  slug text unique not null,
+  slug text not null,
+  -- Qué documento es dentro de la cuenta: 'carta', 'sugerencias', 'menu-dia',
+  -- 'menu-ninos', 'bebidas', 'degustacion' — hasta 6 por cuenta.
+  menu_key text not null default 'carta',
   business_name text not null,
   menu_title text not null default 'Carta',
   design jsonb not null default '{}'::jsonb,
   categories jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  unique (slug, menu_key)
 );
 
 -- Lectura pública (sin login): el objetivo es que cualquiera con el enlace

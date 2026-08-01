@@ -7,15 +7,17 @@ import { DigitalMenuView } from "@/components/DigitalMenuView";
 // instante, sin necesidad de un nuevo deploy en Vercel.
 export const dynamic = "force-dynamic";
 
-async function getMenu(slug: string): Promise<DigitalMenu | null> {
-  if (!supabase) return null;
+// Una cuenta puede tener hasta 6 documentos publicados bajo el mismo slug
+// (Carta, Sugerencias, Menú del día...) — se traen todos de una vez y el
+// desplegable de DigitalMenuView cambia entre ellos sin recargar la página.
+async function getMenus(slug: string): Promise<DigitalMenu[]> {
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("digital_menus")
     .select("*")
-    .eq("slug", slug)
-    .maybeSingle();
-  if (error || !data) return null;
-  return data as DigitalMenu;
+    .eq("slug", slug);
+  if (error || !data) return [];
+  return data as DigitalMenu[];
 }
 
 export default async function MenuPage({ params }: { params: { slug: string } }) {
@@ -28,9 +30,9 @@ export default async function MenuPage({ params }: { params: { slug: string } })
     );
   }
 
-  const menu = await getMenu(params.slug);
+  const menus = await getMenus(params.slug);
 
-  if (!menu) {
+  if (menus.length === 0) {
     return (
       <Message
         title="Carta no encontrada"
@@ -39,7 +41,7 @@ export default async function MenuPage({ params }: { params: { slug: string } })
     );
   }
 
-  return <DigitalMenuView menu={menu} />;
+  return <DigitalMenuView menus={menus} />;
 }
 
 function Message({ title, body }: { title: string; body: string }) {

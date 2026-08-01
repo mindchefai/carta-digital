@@ -40,9 +40,22 @@ export interface MenuDesign {
   defaultLanguage: string;
 }
 
+// Los mismos 6 posibles "cajones" que ofrece la app (ver
+// amplify-template/src/hooks/useDigitalMenu.ts, DIGITAL_MENU_SLOTS) —
+// mantener ambas listas en sync si se añade o renombra alguno.
+export const MENU_SLOT_LABELS: Record<string, string> = {
+  carta: "Carta",
+  sugerencias: "Sugerencias",
+  "menu-dia": "Menú del día",
+  "menu-ninos": "Menú de niños",
+  bebidas: "Bebidas",
+  degustacion: "Menú degustación",
+};
+
 export interface DigitalMenu {
   id: string;
   slug: string;
+  menu_key: string;
   business_name: string;
   menu_title: string;
   design: MenuDesign;

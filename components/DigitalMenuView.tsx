@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { DigitalMenu, MenuRecipe } from "@/lib/types";
+import { MENU_SLOT_LABELS } from "@/lib/types";
 
 // Fuentes nativas de jsPDF (usadas por el editor de diseño de MindChef) → su
 // equivalente CSS. Cualquier otro valor se trata como Google Font.
@@ -42,13 +43,28 @@ function titleFor(recipe: MenuRecipe, lang: string): string {
   );
 }
 
-export function DigitalMenuView({ menu }: { menu: DigitalMenu }) {
+export function DigitalMenuView({ menus }: { menus: DigitalMenu[] }) {
+  const preferredOrder = Object.keys(MENU_SLOT_LABELS);
+  const sortedMenus = [...menus].sort(
+    (a, b) => preferredOrder.indexOf(a.menu_key) - preferredOrder.indexOf(b.menu_key)
+  );
+  const defaultMenu = sortedMenus.find(m => m.menu_key === "carta") ?? sortedMenus[0];
+  const [selectedMenuKey, setSelectedMenuKey] = useState(defaultMenu.menu_key);
+  const menu = sortedMenus.find(m => m.menu_key === selectedMenuKey) ?? defaultMenu;
+
   const { design, categories } = menu;
   const languages = design.languages && design.languages.length > 0
     ? design.languages
     : [design.defaultLanguage || "es"];
   const [selectedLang, setSelectedLang] = useState(design.defaultLanguage || languages[0]);
   const [openPhotoUrl, setOpenPhotoUrl] = useState<string | null>(null);
+
+  // Al cambiar de menú (Carta → Sugerencias...), vuelve al idioma por
+  // defecto de ese menú en vez de arrastrar el seleccionado en el anterior.
+  useEffect(() => {
+    setSelectedLang(design.defaultLanguage || languages[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMenuKey]);
 
   const bodyFont  = resolveFontFamily(design.fontFamily);
   const titleFont = resolveFontFamily(design.titleFontFamily);
@@ -95,8 +111,46 @@ export function DigitalMenuView({ menu }: { menu: DigitalMenu }) {
             borderBottom: `2px solid ${design.primaryColor || "#68A5A8"}`,
           }}
         >
+          {design.logoUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={design.logoUrl}
+              alt={menu.business_name}
+              style={{ maxHeight: 64, marginBottom: 12 }}
+            />
+          )}
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 28,
+              fontFamily: titleFont.css,
+              color: design.secondaryColor || "#203C42",
+            }}
+          >
+            {menu.menu_title}
+          </h1>
+
+          {sortedMenus.length > 1 && (
+            <select
+              value={selectedMenuKey}
+              onChange={e => setSelectedMenuKey(e.target.value)}
+              style={{
+                marginTop: 14, padding: "8px 14px", borderRadius: 999,
+                border: `1.5px solid ${design.primaryColor || "#68A5A8"}`,
+                background: "#fff", color: design.secondaryColor || "#203C42",
+                fontSize: 13, fontWeight: 600, cursor: "pointer",
+              }}
+            >
+              {sortedMenus.map(m => (
+                <option key={m.menu_key} value={m.menu_key}>
+                  {MENU_SLOT_LABELS[m.menu_key] ?? m.menu_key}
+                </option>
+              ))}
+            </select>
+          )}
+
           {languages.length > 1 && (
-            <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 14 }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 14 }}>
               {languages.map(lang => (
                 <button
                   key={lang}
@@ -123,24 +177,6 @@ export function DigitalMenuView({ menu }: { menu: DigitalMenu }) {
               ))}
             </div>
           )}
-          {design.logoUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={design.logoUrl}
-              alt={menu.business_name}
-              style={{ maxHeight: 64, marginBottom: 12 }}
-            />
-          )}
-          <h1
-            style={{
-              margin: 0,
-              fontSize: 28,
-              fontFamily: titleFont.css,
-              color: design.secondaryColor || "#203C42",
-            }}
-          >
-            {menu.menu_title}
-          </h1>
         </header>
 
         {/* Categorías */}
